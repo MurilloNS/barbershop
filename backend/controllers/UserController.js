@@ -110,4 +110,72 @@ module.exports = class UserController {
       });
     }
   }
+
+  static async login(req, res) {
+    const { email, password } = req.body;
+    const timestamp = UserController.formatTimestamp()
+    const path = req.originalUrl
+
+    if (!email || !password) {
+      return res.status(400).json({
+        status: 400,
+        error: 'Bad Request',
+        message: 'E-mail e senha são obrigatórios!',
+        timestamp,
+        path
+      })
+    }
+
+    try {
+      const user = await User.findOne({ email })
+
+      if (!user) {
+        return res.status(404).json({
+          status: 404,
+          error: 'Not Found',
+          message: 'Usuário não encontrado!',
+          timestamp,
+          path
+        })
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password)
+
+      if (!isPasswordValid) {
+        return res.status(401).json({
+          status: 401,
+          error: 'Unauthorized',
+          message: 'Senha inválida!',
+          timestamp,
+          path
+        })
+      }
+
+      const token = jwt.sign(
+        {
+          id: user._id,
+          email: user.email,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      )
+
+      return res.status(200).json({
+        status: 200,
+        message: 'Login realizado com sucesso!',
+        token,
+        timestamp,
+        path
+      })
+    } catch (e) {
+      console.error('ERROR', e)
+      return res.status(500).json({
+        status: 500,
+        error: 'Internal Server Error',
+        message: 'Erro ao realizar login!',
+        timestamp,
+        path
+      })
+    }
+  }
 }

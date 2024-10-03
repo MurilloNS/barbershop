@@ -1,4 +1,7 @@
 const User = require('../models/User')
+const bcrypt = require('bcrypt')
+const jwt = require('jsonwebtoken')
+require('dotenv').config();
 
 module.exports = class UserController {
   static formatTimestamp() {
@@ -29,6 +32,28 @@ module.exports = class UserController {
       })
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      return res.status(400).json({
+        status: 400,
+        error: 'Bad Request',
+        message: 'Formato de e-mail inválido!',
+        timestamp,
+        path,
+      })
+    }
+
+    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        status: 400,
+        error: 'Bad Request',
+        message: 'A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra e um número!',
+        timestamp,
+        path
+      })
+    }
+
     if (password !== confirmPassword) {
       return res.status(400).json({
         status: 400,
@@ -52,12 +77,25 @@ module.exports = class UserController {
         });
       }
 
-      const newUser = new User({ name, email, phone, password })
+      const salt = await bcrypt.genSalt(10)
+      const hashedPassword = await bcrypt.hash(password, salt)
+
+      const newUser = new User({ name, email, phone, password: hashedPassword })
       await newUser.save();
+
+      const token = jwt.sign(
+        {
+          id: newUser._id,
+          email: newUser.email,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: '1h' }
+      )
 
       return res.status(201).json({
         status: 201,
         message: 'Usuário criado com sucesso!',
+        token,
         timestamp,
         path,
       });

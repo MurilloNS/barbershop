@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const UserController = require('../controllers/UserController');
+const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
 
 /**
  * @swagger
@@ -76,9 +77,57 @@ const UserController = require('../controllers/UserController');
  *         description: "Usuário não encontrado!"
  *       500:
  *         description: "Erro ao realizar login"
+ *
+ * /users/update:
+ *   patch:
+ *     tags:
+ *       - "Usuários"
+ *     summary: "Atualizar perfil do usuário"
+ *     description: "Atualiza as informações do perfil de um usuário autenticado."
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *               password:
+ *                 type: string
+ *               confirmPassword:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: "Cadastro atualizado com sucesso!"
+ *       400:
+ *         description: "As senhas precisam ser iguais!"
+ *       401:
+ *         description: "Token não fornecido ou inválido!"
+ *       404:
+ *         description: "Usuário não encontrado!"
+ *       500:
+ *         description: "Erro ao atualizar cadastro!"
+ */
+
+/**
+ * @swagger
+ * components:
+ *   securitySchemes:
+ *     bearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  */
 
 router.post('/register', UserController.register);
 router.post('/login', UserController.login)
+router.patch('/update', jwtAuthMiddleware, UserController.update)
 
 module.exports = router;

@@ -114,6 +114,24 @@ const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
  *         description: "Usuário não encontrado!"
  *       500:
  *         description: "Erro ao atualizar cadastro!"
+ * 
+ * /users/delete:
+ *   delete:
+ *     security:
+ *       - bearerAuth: []
+ *     tags:
+ *       - "Usuários"
+ *     summary: "Deletar cadastro do usuário"
+ *     description: "Remove o cadastro do usuário autenticado."
+ *     responses:
+ *       200:
+ *         description: "Cadastro deletado com sucesso!"
+ *       401:
+ *         description: "Token não fornecido ou inválido!"
+ *       404:
+ *         description: "Usuário não encontrado!"
+ *       500:
+ *         description: "Erro ao deletar cadastro"
  */
 
 /**
@@ -129,5 +147,6 @@ const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
 router.post('/register', UserController.register);
 router.post('/login', UserController.login)
 router.patch('/update', jwtAuthMiddleware, UserController.update)
+router.delete('/delete', jwtAuthMiddleware, UserController.delete)
 
 module.exports = router;

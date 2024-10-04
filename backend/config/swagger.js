@@ -5,9 +5,9 @@ const swaggerOptions = {
   definition: {
     openapi: '3.0.0',
     info: {
-      title: 'Usuário',
+      title: 'Barbearia',
       version: '1.0.0',
-      description: 'Documentação da API de usuários.'
+      description: 'Documentação da API.'
     },
     servers: [
       {

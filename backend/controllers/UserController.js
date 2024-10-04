@@ -1,25 +1,15 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-require('dotenv').config();
+const { formatTimestamp } = require('../utils/formatTimestamp')
+const { isEmailValid, isPasswordValid } = require('../utils/validEmailPassword')
+require('dotenv').config()
 
 module.exports = class UserController {
-  static formatTimestamp() {
-    const now = new Date()
-    const day = String(now.getDate()).padStart(2, '0')
-    const month = String(now.getMonth() + 1).padStart(2, '0')
-    const year = now.getFullYear()
-    const hours = String(now.getHours()).padStart(2, '0');
-    const minutes = String(now.getMinutes()).padStart(2, '0');
-    const seconds = String(now.getSeconds()).padStart(2, '0');
-
-    return `${day}/${month}/${year} ${hours}:${minutes}:${seconds}`;
-  }
-
   static async register(req, res) {
     const { name, email, phone, password, confirmPassword } = req.body
 
-    const timestamp = UserController.formatTimestamp();
+    const timestamp = formatTimestamp();
     const path = req.originalUrl
 
     if (!name || !email || !phone || !password || !confirmPassword) {
@@ -32,8 +22,7 @@ module.exports = class UserController {
       })
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    if (!isEmailValid(email)) {
       return res.status(400).json({
         status: 400,
         error: 'Bad Request',
@@ -43,8 +32,7 @@ module.exports = class UserController {
       })
     }
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
-    if (!passwordRegex.test(password)) {
+    if (!isPasswordValid(password)) {
       return res.status(400).json({
         status: 400,
         error: 'Bad Request',
@@ -113,7 +101,7 @@ module.exports = class UserController {
 
   static async login(req, res) {
     const { email, password } = req.body;
-    const timestamp = UserController.formatTimestamp()
+    const timestamp = formatTimestamp()
     const path = req.originalUrl
 
     if (!email || !password) {

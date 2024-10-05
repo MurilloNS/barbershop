@@ -183,10 +183,40 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware");
  *         description: "Barbeiro não encontrado!"
  *       500:
  *         description: "Erro ao atualizar cadastro!"
+ *
+ * /barbers/delete:
+ *   delete:
+ *     tags:
+ *       - "Barbeiros"
+ *     summary: "Deletar barbeiro"
+ *     description: "Remove o cadastro de um barbeiro autenticado."
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: "Cadastro deletado com sucesso!"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Cadastro deletado com sucesso!"
+ *       401:
+ *         description: "Token não fornecido ou inválido!"
+ *       404:
+ *         description: "Barbeiro não encontrado!"
+ *       500:
+ *         description: "Erro ao deletar cadastro!"
  */
 
 router.post("/register", BarberController.register);
 router.post("/login", BarberController.login);
 router.patch("/update", jwtAuthMiddleware, BarberController.update);
+router.delete("/delete", jwtAuthMiddleware, BarberController.delete);
 
 module.exports = router;

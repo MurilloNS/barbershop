@@ -263,4 +263,52 @@ module.exports = class BarberController {
       });
     }
   }
+
+  static async delete(req, res) {
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+    const token = req.headers["authorization"]?.split(" ")[1];
+
+    if (!token) {
+      return res.status(401).json({
+        status: 401,
+        error: "Unauthorized",
+        message: "Token não fornecido!",
+        timestamp,
+        path,
+      });
+    }
+
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const barberId = decoded.id;
+      const barber = await Barber.findById(barberId);
+
+      if (!barber) {
+        return res.status(404).json({
+          status: 404,
+          error: "Not Found",
+          message: "Barbeiro não encontrado!",
+        });
+      }
+
+      await Barber.findByIdAndDelete(barberId);
+
+      return res.status(200).json({
+        status: 200,
+        message: "Cadastro deletado com sucesso!",
+        timestamp,
+        path,
+      });
+    } catch (e) {
+      console.error("ERROR", e);
+      return res.status(500).json({
+        status: 500,
+        error: "Internal Server Error",
+        message: "Erro ao deletar cadastro!",
+        timestamp,
+        path,
+      });
+    }
+  }
 };

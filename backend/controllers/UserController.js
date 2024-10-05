@@ -1,74 +1,83 @@
-const User = require('../models/User')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
-const { formatTimestamp } = require('../utils/formatTimestamp')
-const { isEmailValid, isPasswordValid } = require('../utils/validEmailPassword')
-require('dotenv').config()
+const User = require("../models/User");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const { formatTimestamp } = require("../utils/formatTimestamp");
+const {
+  isEmailValid,
+  isPasswordValid,
+} = require("../utils/validEmailPassword");
+require("dotenv").config();
 
 module.exports = class UserController {
   static async register(req, res) {
-    const { name, email, phone, password, confirmPassword } = req.body
+    const { name, email, phone, password, confirmPassword } = req.body;
 
     const timestamp = formatTimestamp();
-    const path = req.originalUrl
+    const path = req.originalUrl;
 
     if (!name || !email || !phone || !password || !confirmPassword) {
       return res.status(400).json({
         status: 400,
-        error: 'Bad Request',
-        message: 'Todos os campos são obrigatórios!',
+        error: "Bad Request",
+        message: "Todos os campos são obrigatórios!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
 
     if (!isEmailValid(email)) {
       return res.status(400).json({
         status: 400,
-        error: 'Bad Request',
-        message: 'Formato de e-mail inválido!',
+        error: "Bad Request",
+        message: "Formato de e-mail inválido!",
         timestamp,
         path,
-      })
+      });
     }
 
     if (!isPasswordValid(password)) {
       return res.status(400).json({
         status: 400,
-        error: 'Bad Request',
-        message: 'A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra e um número!',
+        error: "Bad Request",
+        message:
+          "A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra e um número!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
 
     if (password !== confirmPassword) {
       return res.status(400).json({
         status: 400,
-        error: 'Bad Request',
-        message: 'As senhas precisam ser iguais!',
+        error: "Bad Request",
+        message: "As senhas precisam ser iguais!",
         timestamp,
         path,
       });
     }
 
     try {
-      const userExists = await User.findOne({ email: email })
+      const userExists = await User.findOne({ email: email });
 
       if (userExists) {
         return res.status(409).json({
           status: 409,
-          error: 'Conflict',
-          message: 'Usuário já cadastrado!',
+          error: "Conflict",
+          message: "Usuário já cadastrado!",
           timestamp,
           path,
         });
       }
 
-      const salt = await bcrypt.genSalt(10)
-      const hashedPassword = await bcrypt.hash(password, salt)
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
-      const newUser = new User({ name, email, phone, password: hashedPassword })
+      const newUser = new User({
+        name,
+        email,
+        phone,
+        password: hashedPassword,
+      });
       await newUser.save();
 
       const token = jwt.sign(
@@ -77,22 +86,22 @@ module.exports = class UserController {
           email: newUser.email,
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      )
+        { expiresIn: "1h" }
+      );
 
       return res.status(201).json({
         status: 201,
-        message: 'Usuário criado com sucesso!',
+        message: "Usuário criado com sucesso!",
         token,
         timestamp,
         path,
       });
     } catch (e) {
-      console.error('ERROR', e);
+      console.error("ERROR", e);
       return res.status(500).json({
         status: 500,
-        error: 'Internal Server Error',
-        message: 'Erro ao criar usuário!',
+        error: "Internal Server Error",
+        message: "Erro ao criar usuário!",
         timestamp,
         path,
       });
@@ -101,42 +110,42 @@ module.exports = class UserController {
 
   static async login(req, res) {
     const { email, password } = req.body;
-    const timestamp = formatTimestamp()
-    const path = req.originalUrl
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
 
     if (!email || !password) {
       return res.status(400).json({
         status: 400,
-        error: 'Bad Request',
-        message: 'E-mail e senha são obrigatórios!',
+        error: "Bad Request",
+        message: "E-mail e senha são obrigatórios!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
 
     try {
-      const user = await User.findOne({ email })
+      const user = await User.findOne({ email });
 
       if (!user) {
         return res.status(404).json({
           status: 404,
-          error: 'Not Found',
-          message: 'Usuário não encontrado!',
+          error: "Not Found",
+          message: "Usuário não encontrado!",
           timestamp,
-          path
-        })
+          path,
+        });
       }
 
-      const isPasswordValid = await bcrypt.compare(password, user.password)
+      const isPasswordValid = await bcrypt.compare(password, user.password);
 
       if (!isPasswordValid) {
         return res.status(401).json({
           status: 401,
-          error: 'Unauthorized',
-          message: 'Senha inválida!',
+          error: "Unauthorized",
+          message: "Senha inválida!",
           timestamp,
-          path
-        })
+          path,
+        });
       }
 
       const token = jwt.sign(
@@ -145,25 +154,25 @@ module.exports = class UserController {
           email: user.email,
         },
         process.env.JWT_SECRET,
-        { expiresIn: '1h' }
-      )
+        { expiresIn: "1h" }
+      );
 
       return res.status(200).json({
         status: 200,
-        message: 'Login realizado com sucesso!',
+        message: "Login realizado com sucesso!",
         token,
         timestamp,
-        path
-      })
+        path,
+      });
     } catch (e) {
-      console.error('ERROR', e)
+      console.error("ERROR", e);
       return res.status(500).json({
         status: 500,
-        error: 'Internal Server Error',
-        message: 'Erro ao realizar login!',
+        error: "Internal Server Error",
+        message: "Erro ao realizar login!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
   }
 
@@ -171,13 +180,13 @@ module.exports = class UserController {
     const { name, email, phone, password, confirmPassword } = req.body;
     const timestamp = formatTimestamp();
     const path = req.originalUrl;
-
-    const token = req.headers['authorization']?.split(' ')[1];
+    const token = req.headers["authorization"]?.split(" ")[1];
+    
     if (!token) {
       return res.status(401).json({
         status: 401,
-        error: 'Unauthorized',
-        message: 'Token não fornecido!',
+        error: "Unauthorized",
+        message: "Token não fornecido!",
         timestamp,
         path,
       });
@@ -186,13 +195,13 @@ module.exports = class UserController {
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const userId = decoded.id;
-
       const user = await User.findById(userId);
+      
       if (!user) {
         return res.status(404).json({
           status: 404,
-          error: 'Not Found',
-          message: 'Usuário não encontrado!',
+          error: "Not Found",
+          message: "Usuário não encontrado!",
           timestamp,
           path,
         });
@@ -206,18 +215,19 @@ module.exports = class UserController {
         if (!isPasswordValid(password)) {
           return res.status(400).json({
             status: 400,
-            error: 'Bad Request',
-            message: 'A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra e um número!',
+            error: "Bad Request",
+            message:
+              "A senha deve conter no mínimo 8 caracteres, incluindo pelo menos uma letra e um número!",
             timestamp,
-            path
-          })
+            path,
+          });
         }
 
         if (password !== confirmPassword) {
           return res.status(400).json({
             status: 400,
-            error: 'Bad Request',
-            message: 'As senhas precisam ser iguais!',
+            error: "Bad Request",
+            message: "As senhas precisam ser iguais!",
             timestamp,
             path,
           });
@@ -225,21 +235,21 @@ module.exports = class UserController {
 
         user.password = await bcrypt.hash(password, 10);
       }
+      
       await user.save();
 
       return res.status(200).json({
         status: 200,
-        message: 'Cadastro atualizado com sucesso!',
+        message: "Cadastro atualizado com sucesso!",
         timestamp,
         path,
       });
-    }
-    catch (e) {
-      console.error('ERROR', e);
+    } catch (e) {
+      console.error("ERROR", e);
       return res.status(500).json({
         status: 500,
-        error: 'Internal Server Error',
-        message: 'Erro ao atualizar cadastro!',
+        error: "Internal Server Error",
+        message: "Erro ao atualizar cadastro!",
         timestamp,
         path,
       });
@@ -247,52 +257,52 @@ module.exports = class UserController {
   }
 
   static async delete(req, res) {
-    const timestamp = formatTimestamp()
-    const path = req.originalUrl
-    const token = req.headers['authorization']?.split(' ')[1]
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+    const token = req.headers["authorization"]?.split(" ")[1];
 
     if (!token) {
       return res.status(401).json({
         status: 401,
-        error: 'Unauthorized',
-        message: 'Token não fornecido!',
+        error: "Unauthorized",
+        message: "Token não fornecido!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
 
     try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET)
-      const userId = decoded.id
-      const user = await User.findById(userId)
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      const userId = decoded.id;
+      const user = await User.findById(userId);
 
       if (!user) {
         return res.status(404).json({
           status: 404,
-          error: 'Not Found',
-          message: 'Usuário não encontrado!',
+          error: "Not Found",
+          message: "Usuário não encontrado!",
           timestamp,
-          path
-        })
+          path,
+        });
       }
 
-      await User.findByIdAndDelete(userId)
+      await User.findByIdAndDelete(userId);
 
       return res.status(200).json({
         status: 200,
-        message: 'Cadastro deletado com sucesso!',
+        message: "Cadastro deletado com sucesso!",
         timestamp,
-        path
-      })
+        path,
+      });
     } catch (e) {
-      console.error('ERROR', e)
+      console.error("ERROR", e);
       return res.status(500).json({
         status: 500,
-        error: 'Internal Server Error',
-        message: 'Erro ao deletar cadastro!',
+        error: "Internal Server Error",
+        message: "Erro ao deletar cadastro!",
         timestamp,
-        path
-      })
+        path,
+      });
     }
   }
-}
+};

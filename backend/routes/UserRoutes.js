@@ -1,13 +1,13 @@
-const router = require('express').Router();
-const UserController = require('../controllers/UserController');
-const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
+const router = require("express").Router();
+const UserController = require("../controllers/UserController");
+const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware");
 
 /**
  * @swagger
  * tags:
  *   - name: "Usuários"
  *     description: "Operações relacionadas a usuários"
- * 
+ *
  * /users/register:
  *   post:
  *     tags:
@@ -114,7 +114,7 @@ const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
  *         description: "Usuário não encontrado!"
  *       500:
  *         description: "Erro ao atualizar cadastro!"
- * 
+ *
  * /users/delete:
  *   delete:
  *     security:
@@ -144,9 +144,9 @@ const jwtAuthMiddleware = require('../middlewares/jwtAuthMiddleware');
  *       bearerFormat: JWT
  */
 
-router.post('/register', UserController.register);
-router.post('/login', UserController.login)
-router.patch('/update', jwtAuthMiddleware, UserController.update)
-router.delete('/delete', jwtAuthMiddleware, UserController.delete)
+router.post("/register", UserController.register);
+router.post("/login", UserController.login);
+router.patch("/update", jwtAuthMiddleware, UserController.update);
+router.delete("/delete", jwtAuthMiddleware, UserController.delete);
 
 module.exports = router;

@@ -8,6 +8,50 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware");
  *   - name: "Barbeiros"
  *     description: "Operações relacionadas a barbeiros"
  *
+ * /barbers:
+ *  get:
+ *     summary: Lista todos os barbeiros
+ *     tags: 
+ *        - "Barbeiros"
+ *     responses:
+ *       200:
+ *         description: Lista de barbeiros retornada com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: ID do barbeiro.
+ *                   name:
+ *                     type: string
+ *                     description: Nome do barbeiro.
+ *                   email:
+ *                     type: string
+ *                     description: E-mail do barbeiro.
+ *                   phone:
+ *                     type: string
+ *                     description: Telefone do barbeiro.
+ *                   workSchedule:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     description: Horário de trabalho do barbeiro.
+ *                   isActive:
+ *                     type: boolean
+ *                     description: Situação do cadastro do barbeiro.
+ *                   createdAt:
+ *                     type: string
+ *                     description: Data de criação.
+ *                   updatedAt:
+ *                     type: string
+ *                     description: Data de atualização.
+ *       500:
+ *         description: Erro ao listar barbeiros.
+ *
  * /barbers/register:
  *   post:
  *     tags:
@@ -214,6 +258,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware");
  *         description: "Erro ao deletar cadastro!"
  */
 
+router.get("/", BarberController.getAllBarbers);
 router.post("/register", BarberController.register);
 router.post("/login", BarberController.login);
 router.patch("/update", jwtAuthMiddleware, BarberController.update);

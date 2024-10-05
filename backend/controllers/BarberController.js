@@ -9,6 +9,42 @@ const {
 require("dotenv").config();
 
 module.exports = class BarberController {
+  static async getAllBarbers(req, res) {
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+
+    try {
+      const barbers = await Barber.find().select("-password -__v");
+
+      if (!barbers.length) {
+        return res.status(404).json({
+          status: 404,
+          error: "Not Found",
+          message: "Nenhum barbeiro encontrado!",
+          timestamp,
+          path,
+        });
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: "Lista os barbeiros recuperados com sucesso!",
+        barbers,
+        timestamp,
+        path,
+      });
+    } catch (e) {
+      console.error("ERROR", e);
+      return res.status(500).json({
+        status: 500,
+        error: "Internal Server Error",
+        message: "Erro ao recuperar lista de barbeiros!",
+        timestamp,
+        path,
+      });
+    }
+  }
+
   static async register(req, res) {
     const { name, email, phone, password, confirmPassword, workSchedule } =
       req.body;

@@ -7,7 +7,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  * @swagger
  * tags:
  *   name: Agendamentos
- *   description: Gerenciamento de agendamentos de serviços
+ *   description: Operações relacionadas a agendamentos
  */
 
 /**

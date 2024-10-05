@@ -181,16 +181,6 @@ module.exports = class UserController {
     const timestamp = formatTimestamp();
     const path = req.originalUrl;
     const token = req.headers["authorization"]?.split(" ")[1];
-    
-    if (!token) {
-      return res.status(401).json({
-        status: 401,
-        error: "Unauthorized",
-        message: "Token não fornecido!",
-        timestamp,
-        path,
-      });
-    }
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -235,7 +225,7 @@ module.exports = class UserController {
 
         user.password = await bcrypt.hash(password, 10);
       }
-      
+
       await user.save();
 
       return res.status(200).json({
@@ -260,16 +250,6 @@ module.exports = class UserController {
     const timestamp = formatTimestamp();
     const path = req.originalUrl;
     const token = req.headers["authorization"]?.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({
-        status: 401,
-        error: "Unauthorized",
-        message: "Token não fornecido!",
-        timestamp,
-        path,
-      });
-    }
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

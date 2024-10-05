@@ -10,9 +10,11 @@ app.use(express.static("public"));
 
 const UserRoutes = require("./routes/UserRoutes");
 const BarberRoutes = require("./routes/BarberRoutes");
+const ServiceRoutes = require("./routes/ServiceRoutes");
 const AppointmentRoutes = require("./routes/AppointmentRoutes");
 
 app.use("/users", UserRoutes);
 app.use("/barbers", BarberRoutes);
+app.use("/services", ServiceRoutes);
 app.use("/appointments", AppointmentRoutes);
 app.listen(8080);

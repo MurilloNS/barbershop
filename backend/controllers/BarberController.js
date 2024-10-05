@@ -225,16 +225,6 @@ module.exports = class BarberController {
     const path = req.originalUrl;
     const token = req.headers["authorization"]?.split(" ")[1];
 
-    if (!token) {
-      return res.status(401).json({
-        status: 401,
-        error: "Unauthorized",
-        message: "Token não fornecido!",
-        timestamp,
-        path,
-      });
-    }
-
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
       const barberId = decoded.id;
@@ -304,16 +294,6 @@ module.exports = class BarberController {
     const timestamp = formatTimestamp();
     const path = req.originalUrl;
     const token = req.headers["authorization"]?.split(" ")[1];
-
-    if (!token) {
-      return res.status(401).json({
-        status: 401,
-        error: "Unauthorized",
-        message: "Token não fornecido!",
-        timestamp,
-        path,
-      });
-    }
 
     try {
       const decoded = jwt.verify(token, process.env.JWT_SECRET);

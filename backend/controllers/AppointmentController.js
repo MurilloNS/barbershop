@@ -42,7 +42,7 @@ module.exports = class AppointmentController {
         });
       }
 
-      const [hours, minutes] = service.duration.split(":".map(Number));
+      const [hours, minutes] = service.duration.split(":").map(Number);
       const duration = (hours * 60 + minutes) * 60 * 1000;
 
       const appointmentDate = new Date(date);

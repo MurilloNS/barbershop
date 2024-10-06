@@ -217,6 +217,108 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                 message:
  *                   type: string
  *                   example: "Erro ao buscar agendamentos!"
+ *
+ * /appointments/{id}:
+ *   get:
+ *     summary: Buscar um agendamento pelo ID
+ *     tags: [Agendamentos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID do agendamento a ser buscado.
+ *     responses:
+ *       200:
+ *         description: Agendamento encontrado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Agendamento encontrado com sucesso!"
+ *                 appointment:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                     barberId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                     userId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                     serviceId:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                         name:
+ *                           type: string
+ *                         price:
+ *                           type: number
+ *                         duration:
+ *                           type: string
+ *                     date:
+ *                       type: string
+ *                       format: date-time
+ *                     status:
+ *                       type: string
+ *                       enum: ["scheduled", "closed", "canceled"]
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Agendamento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 404
+ *                 error:
+ *                   type: string
+ *                   example: Not Found
+ *                 message:
+ *                   type: string
+ *                   example: "Agendamento não encontrado!"
+ *       500:
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *                 message:
+ *                   type: string
+ *                   example: "Erro ao buscar o agendamento!"
  */
 
 router.get(
@@ -224,6 +326,7 @@ router.get(
   jwtAuthMiddleware,
   AppointmentController.listAppointmentsByBarber
 );
+router.get("/:appointmentId", jwtAuthMiddleware, AppointmentController.getById);
 router.post("/schedule", jwtAuthMiddleware, AppointmentController.schedule);
 
 module.exports = router;

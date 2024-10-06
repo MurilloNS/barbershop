@@ -132,4 +132,44 @@ module.exports = class AppointmentController {
       });
     }
   }
+
+  static async getById(req, res) {
+    const { appointmentId } = req.params;
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+
+    try {
+      const appointment = await Appointment.findById(appointmentId).populate(
+        "barberId userId serviceId",
+        "name price duration"
+      );
+
+      if (!appointment) {
+        return res.status(404).json({
+          status: 404,
+          error: "Not Found",
+          message: "Agendamento não encontrado!",
+          timestamp,
+          path,
+        });
+      }
+
+      return res.status(200).json({
+        status: 200,
+        message: "Agenamento encontrado com sucesso!",
+        appointment,
+        timestamp,
+        path,
+      });
+    } catch (e) {
+      console.error("ERROR", e);
+      return res.status(500).json({
+        status: 500,
+        error: "Internal Server Error",
+        message: "Erro ao buscar o agendamento!",
+        timestamp,
+        path,
+      });
+    }
+  }
 };

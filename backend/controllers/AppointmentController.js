@@ -90,4 +90,46 @@ module.exports = class AppointmentController {
       });
     }
   }
+
+  static async listAppointmentsByBarber(req, res) {
+    const { barberId } = req.params;
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+
+    try {
+      const barber = await Barber.findById(barberId);
+
+      if (!barber) {
+        return res.status(404).json({
+          status: 404,
+          error: "Not Found",
+          message: "Barbeiro não encontrado!",
+          timestamp,
+          path,
+        });
+      }
+
+      const appointments = await Appointment.find({ barberId }).populate(
+        "userId serviceId",
+        "name price duration"
+      );
+
+      return res.status(200).json({
+        status: 200,
+        message: "Agendamento(s) recuperados com sucesso!",
+        appointments,
+        timestamp,
+        path,
+      });
+    } catch (e) {
+      console.error("ERROR", e);
+      return res.status(500).json({
+        status: 500,
+        error: "Internal Server Error",
+        message: "Erro ao listar agendamentos!",
+        timestamp,
+        path,
+      });
+    }
+  }
 };

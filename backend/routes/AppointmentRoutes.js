@@ -144,9 +144,86 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                 message:
  *                   type: string
  *                   example: "Erro ao criar agendamento!"
+ *
+ * /appointments/barber/{barberId}:
+ *   get:
+ *     summary: Listar agendamentos de um barbeiro
+ *     tags: [Agendamentos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: barberId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID do barbeiro
+ *     responses:
+ *       200:
+ *         description: Lista de agendamentos do barbeiro.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   barberId:
+ *                     type: string
+ *                     description: ID do barbeiro.
+ *                   userId:
+ *                     type: string
+ *                     description: ID do cliente.
+ *                   serviceId:
+ *                     type: string
+ *                     description: ID do serviço.
+ *                   date:
+ *                     type: string
+ *                     format: date-time
+ *                     description: Data do agendamento.
+ *                   status:
+ *                     type: string
+ *                     enum: ["scheduled", "closed", "canceled"]
+ *                     description: Status do agendamento.
+ *       401:
+ *         description: Não autorizado (token não fornecido ou inválido).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 401
+ *                 error:
+ *                   type: string
+ *                   example: Unauthorized
+ *                 message:
+ *                   type: string
+ *                   example: "Token não fornecido!"
+ *       500:
+ *         description: Erro interno do servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *                 message:
+ *                   type: string
+ *                   example: "Erro ao buscar agendamentos!"
  */
 
-
+router.get(
+  "/barber/:barberId",
+  jwtAuthMiddleware,
+  AppointmentController.listAppointmentsByBarber
+);
 router.post("/schedule", jwtAuthMiddleware, AppointmentController.schedule);
 
 module.exports = router;

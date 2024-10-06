@@ -172,4 +172,48 @@ module.exports = class AppointmentController {
       });
     }
   }
+
+  static async update(req, res) {
+    const { appointmentId } = req.params;
+    const updates = req.body;
+    const timestamp = formatTimestamp();
+    const path = req.originalUrl;
+
+    try {
+      const appointment = await Appointment.findById(appointmentId);
+
+      if (!appointment) {
+        return res.status(404).json({
+          status: 404,
+          error: "Not Found",
+          message: "Agendamento não encontrado!",
+          timestamp,
+          path,
+        });
+      }
+
+      Object.keys(updates).forEach((key) => {
+        appointment[key] = updates[key];
+      });
+
+      await appointment.save();
+
+      return res.status(200).json({
+        status: 200,
+        message: "Agendamento atualizado com sucesso!",
+        appointment,
+        timestamp,
+        path,
+      });
+    } catch (e) {
+      console.error("ERROR", e);
+      return res.status(500).json({
+        status: 500,
+        error: "Internal Server Error",
+        message: "Erro ao atualizar o agendamento!",
+        timestamp,
+        path,
+      });
+    }
+  }
 };

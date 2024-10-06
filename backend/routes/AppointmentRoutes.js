@@ -319,6 +319,99 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                 message:
  *                   type: string
  *                   example: "Erro ao buscar o agendamento!"
+ *
+ * /appointments/{appointmentId}:
+ *   patch:
+ *     summary: Atualizar status ou outros atributos de um agendamento
+ *     tags: [Agendamentos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: appointmentId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID do agendamento a ser atualizado
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 description: Novo status do agendamento (scheduled, closed, canceled)
+ *                 example: "closed"
+ *               date:
+ *                 type: string
+ *                 description: Nova data do agendamento
+ *                 example: "2024-10-15T14:00:00.000Z"
+ *     responses:
+ *       200:
+ *         description: Agendamento atualizado com sucesso.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: "Agendamento atualizado com sucesso!"
+ *                 appointment:
+ *                   $ref: '#/components/schemas/Appointment'
+ *       400:
+ *         description: Solicitação malformada.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 400
+ *                 error:
+ *                   type: string
+ *                   example: Bad Request
+ *                 message:
+ *                   type: string
+ *                   example: "Dados inválidos."
+ *       404:
+ *         description: Agendamento não encontrado.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 404
+ *                 error:
+ *                   type: string
+ *                   example: Not Found
+ *                 message:
+ *                   type: string
+ *                   example: "Agendamento não encontrado!"
+ *       500:
+ *         description: Erro no servidor.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: integer
+ *                   example: 500
+ *                 error:
+ *                   type: string
+ *                   example: Internal Server Error
+ *                 message:
+ *                   type: string
+ *                   example: "Erro ao atualizar o agendamento!"
  */
 
 router.get(
@@ -328,5 +421,10 @@ router.get(
 );
 router.get("/:appointmentId", jwtAuthMiddleware, AppointmentController.getById);
 router.post("/schedule", jwtAuthMiddleware, AppointmentController.schedule);
+router.patch(
+  "/:appointmentId",
+  jwtAuthMiddleware,
+  AppointmentController.update
+);
 
 module.exports = router;

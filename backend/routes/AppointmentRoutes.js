@@ -1,5 +1,4 @@
-const express = require("express");
-const router = express.Router();
+const router = require("express").Router();
 const AppointmentController = require("../controllers/AppointmentController");
 const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middleware para verificar JWT
 
@@ -78,8 +77,8 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                       format: date-time
  *                       example: "2024-10-10T14:00:00Z"
  *                     status:
- *                      type: string
- *                      example: "scheduled"
+ *                       type: string
+ *                       example: "scheduled"
  *       '400':
  *         description: "Requisição mal formada. Um ou mais campos obrigatórios não foram fornecidos."
  *         content:
@@ -218,7 +217,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                   type: string
  *                   example: "Erro ao buscar agendamentos!"
  *
- * /appointments/{id}:
+ * /appointments/{appointmentId}:
  *   get:
  *     summary: Buscar um agendamento pelo ID
  *     tags: [Agendamentos]
@@ -226,7 +225,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *       - bearerAuth: []
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: appointmentId
  *         schema:
  *           type: string
  *         required: true
@@ -302,7 +301,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                   example: Not Found
  *                 message:
  *                   type: string
- *                   example: "Agendamento não encontrado!"
+ *                   example: Agendamento não encontrado!
  *       500:
  *         description: Erro interno do servidor.
  *         content:
@@ -318,11 +317,9 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                   example: Internal Server Error
  *                 message:
  *                   type: string
- *                   example: "Erro ao buscar o agendamento!"
- *
- * /appointments/{appointmentId}:
+ *                   example: "Erro ao buscar agendamento!"
  *   patch:
- *     summary: Atualizar status ou outros atributos de um agendamento
+ *     summary: Atualizar um agendamento
  *     tags: [Agendamentos]
  *     security:
  *       - bearerAuth: []
@@ -332,7 +329,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *         schema:
  *           type: string
  *         required: true
- *         description: ID do agendamento a ser atualizado
+ *         description: ID do agendamento a ser atualizado.
  *     requestBody:
  *       required: true
  *       content:
@@ -340,14 +337,16 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *           schema:
  *             type: object
  *             properties:
- *               status:
- *                 type: string
- *                 description: Novo status do agendamento (scheduled, closed, canceled)
- *                 example: "closed"
  *               date:
  *                 type: string
- *                 description: Nova data do agendamento
- *                 example: "2024-10-15T14:00:00.000Z"
+ *                 format: date-time
+ *                 description: Nova data do agendamento.
+ *                 example: "2024-10-12T15:00:00Z"
+ *               status:
+ *                 type: string
+ *                 enum: ["scheduled", "closed", "canceled"]
+ *                 description: Novo status do agendamento.
+ *                 example: "closed"
  *     responses:
  *       200:
  *         description: Agendamento atualizado com sucesso.
@@ -362,24 +361,6 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                 message:
  *                   type: string
  *                   example: "Agendamento atualizado com sucesso!"
- *                 appointment:
- *                   $ref: '#/components/schemas/Appointment'
- *       400:
- *         description: Solicitação malformada.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: integer
- *                   example: 400
- *                 error:
- *                   type: string
- *                   example: Bad Request
- *                 message:
- *                   type: string
- *                   example: "Dados inválidos."
  *       404:
  *         description: Agendamento não encontrado.
  *         content:
@@ -397,7 +378,7 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                   type: string
  *                   example: "Agendamento não encontrado!"
  *       500:
- *         description: Erro no servidor.
+ *         description: Erro interno do servidor.
  *         content:
  *           application/json:
  *             schema:
@@ -411,18 +392,26 @@ const jwtAuthMiddleware = require("../middlewares/jwtAuthMiddleware"); // Middle
  *                   example: Internal Server Error
  *                 message:
  *                   type: string
- *                   example: "Erro ao atualizar o agendamento!"
+ *                   example: "Erro ao atualizar agendamento!"
  */
 
+router.post(
+  "/appointments/schedule",
+  jwtAuthMiddleware,
+  AppointmentController.schedule
+);
 router.get(
-  "/barber/:barberId",
+  "/appointments/barber/:barberId",
   jwtAuthMiddleware,
   AppointmentController.listAppointmentsByBarber
 );
-router.get("/:appointmentId", jwtAuthMiddleware, AppointmentController.getById);
-router.post("/schedule", jwtAuthMiddleware, AppointmentController.schedule);
+router.get(
+  "/appointments/:appointmentId",
+  jwtAuthMiddleware,
+  AppointmentController.getById
+);
 router.patch(
-  "/:appointmentId",
+  "/appointments/:appointmentId",
   jwtAuthMiddleware,
   AppointmentController.update
 );

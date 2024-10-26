@@ -5,11 +5,11 @@
     </div>
 
     <ul class="navbar-links">
-      <li><RouterLink to="/" exact>Home</RouterLink></li>
-      <li><RouterLink to="/servicos">Serviços</RouterLink></li>
+      <li><RouterLink to="/">Home</RouterLink></li>
+      <li><a href="#servicos">Serviços</a></li>
       <li><RouterLink to="/loja">Loja</RouterLink></li>
-      <li><RouterLink to="/sobre">Sobre</RouterLink></li>
-      <li><RouterLink to="/contato">Contato</RouterLink></li>
+      <li><a href="#sobre">Sobre</a></li>
+      <li><a href="#contato">Contato</a></li>
     </ul>
 
     <div class="navbar-auth">
@@ -57,6 +57,8 @@ $active-link-color: #ffd700;
     padding: 0;
 
     li {
+      cursor: pointer;
+
       a {
         color: $navbar-color;
         text-decoration: none;
@@ -66,11 +68,6 @@ $active-link-color: #ffd700;
         &:hover {
           color: $hover-color;
         }
-      }
-
-      .router-link-active {
-        color: $active-link-color;
-        font-weight: bold;
       }
     }
   }

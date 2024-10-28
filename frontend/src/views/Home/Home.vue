@@ -37,4 +37,18 @@
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
+
+@media (max-width: 1057px) {
+  .overlay {
+    font-size: 2rem;
+    line-height: 1.2;
+  }
+}
+
+@media (max-width: 848px) {
+  .overlay {
+    font-size: 1.7rem;
+    line-height: 1.3;
+  }
+}
 </style>

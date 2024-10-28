@@ -6,10 +6,10 @@
 
     <ul class="navbar-links">
       <li><RouterLink to="/">Home</RouterLink></li>
-      <li><a href="#servicos">Serviços</a></li>
+      <li><a href="#servicos" @click="handleAnchorClick">Serviços</a></li>
       <li><RouterLink to="/loja">Loja</RouterLink></li>
-      <li><a href="#sobre">Sobre</a></li>
-      <li><a href="#contato">Contato</a></li>
+      <li><a href="#sobre" @click="handleAnchorClick">Sobre</a></li>
+      <li><a href="#contato" @click="handleAnchorClick">Contato</a></li>
     </ul>
 
     <div class="navbar-auth">
@@ -21,7 +21,18 @@
 </template>
 
 <script setup>
-import { RouterLink } from "vue-router";
+import { RouterLink, useRouter, useRoute } from "vue-router";
+
+const router = useRouter();
+const route = useRoute();
+
+const handleAnchorClick = (event) => {
+  if (route.path === "/loja") {
+    event.preventDefault();
+    const anchor = event.target.getAttribute("href");
+    router.push(`/${anchor}`);
+  }
+};
 </script>
 
 <style lang="scss">

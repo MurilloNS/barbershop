@@ -26,7 +26,6 @@
 <style lang="scss">
 .main-content {
   padding: 50px;
-  border: 1px solid #ddd;
   margin: 20px 0;
   background-color: #f9f9f9;
 }

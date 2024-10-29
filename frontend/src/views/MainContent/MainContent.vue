@@ -4,14 +4,13 @@
       <Home />
     </section>
 
+    <section id="sobre">
+      <About />
+    </section>
+
     <section id="servicos">
       <h1>Serviços</h1>
       <p>Conteúdo da seção Serviços.</p>
-    </section>
-
-    <section id="sobre">
-      <h1>Sobre</h1>
-      <p>Conteúdo da seção Sobre.</p>
     </section>
 
     <section id="contato">
@@ -21,7 +20,9 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import About from '../About/About.vue';
+</script>
 
 <style lang="scss">
 .main-content {

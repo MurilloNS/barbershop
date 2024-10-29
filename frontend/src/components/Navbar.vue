@@ -6,9 +6,9 @@
 
     <ul class="navbar-links">
       <li><RouterLink to="/">Home</RouterLink></li>
+      <li><a href="#sobre" @click="handleAnchorClick">Sobre</a></li>
       <li><a href="#servicos" @click="handleAnchorClick">Serviços</a></li>
       <li><RouterLink to="/loja">Loja</RouterLink></li>
-      <li><a href="#sobre" @click="handleAnchorClick">Sobre</a></li>
       <li><a href="#contato" @click="handleAnchorClick">Contato</a></li>
     </ul>
 

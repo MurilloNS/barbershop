@@ -1,19 +1,24 @@
 <template>
-  <header>
-    <div class="wrapper">
-      <Navbar />
-    </div>
-  </header>
-
+  <Navbar v-if="!isLoginRoute" />
   <RouterView />
-  <MainContent />
 </template>
 
 <script setup>
-import { RouterLink, RouterView } from "vue-router";
-import Navbar from "./components/Navbar.vue";
-import MainContent from "./views/MainContent/MainContent.vue";
+import { RouterView, useRoute } from "vue-router";
 import "./assets/styles.scss";
+import Navbar from "./components/Navbar.vue";
+import { ref, watch } from "vue";
+
+const route = useRoute();
+const isLoginRoute = ref(false);
+
+watch(
+  route,
+  (newRoute) => {
+    isLoginRoute.value = newRoute.name === "login";
+  },
+  { immediate: true },
+);
 </script>
 
 <style scoped></style>

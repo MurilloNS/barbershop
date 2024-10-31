@@ -7,10 +7,25 @@
         a sua cara
       </h1>
     </div>
+    <div class="main-content">
+    <section id="sobre">
+      <About />
+    </section>
+    <section id="servicos">
+      <h1>Serviços</h1>
+      <p>Conteúdo da seção Serviços.</p>
+    </section>
+    <section id="contato">
+      <h1>Contato</h1>
+      <p>Conteúdo da seção Contato.</p>
+    </section>
+  </div>
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import About from '../About/About.vue';
+</script>
 
 <style lang="scss">
 .home-img {
@@ -36,6 +51,12 @@
   font-size: 2.5rem;
   font-weight: bold;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.main-content {
+  padding: 50px;
+  margin: 20px 0;
+  background-color: #f9f9f9;
 }
 
 @media (max-width: 1057px) {

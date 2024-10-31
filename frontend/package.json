@@ -11,11 +11,15 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.6.0",
+    "@fortawesome/free-solid-svg-icons": "^6.6.0",
+    "@fortawesome/vue-fontawesome": "^3.0.8",
     "normalize.css": "^8.0.1",
     "sass": "^1.80.4",
     "scss": "^0.2.4",
     "vue": "^3.5.12",
-    "vue-router": "^4.4.5"
+    "vue-router": "^4.4.5",
+    "vue-the-mask": "^0.11.1"
   },
   "devDependencies": {
     "@eslint/js": "^9.12.0",

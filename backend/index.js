@@ -5,7 +5,12 @@ const swaggerSetup = require("./config/swagger");
 const app = express();
 swaggerSetup(app);
 app.use(express.json());
-app.use(cors({ credentials: true, origin: "http://localhost:3000" }));
+app.use(
+  cors({
+    credentials: true,
+    origin: ["http://localhost:3000", "http://localhost:5173"],
+  })
+);
 app.use(express.static("public"));
 
 const UserRoutes = require("./routes/UserRoutes");

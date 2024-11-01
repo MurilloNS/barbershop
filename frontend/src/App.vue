@@ -1,5 +1,5 @@
 <template>
-  <Navbar v-if="!isLoginRoute" />
+  <Navbar v-if="!isRegisterRoute" />
   <RouterView />
 </template>
 
@@ -10,12 +10,12 @@ import Navbar from "./components/Navbar.vue";
 import { ref, watch } from "vue";
 
 const route = useRoute();
-const isLoginRoute = ref(false);
+const isRegisterRoute = ref(false);
 
 watch(
   route,
   (newRoute) => {
-    isLoginRoute.value = newRoute.name === "login";
+    isRegisterRoute.value = newRoute.name === "register";
   },
   { immediate: true },
 );

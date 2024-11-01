@@ -1,8 +1,8 @@
 <template>
-  <div class="login">
-    <div class="login-container">
-      <div class="login-image">
-        <img src="../../assets/images/login.jpg" alt="Login" />
+  <div class="register">
+    <div class="register-container">
+      <div class="register-image">
+        <img src="../../assets/images/register.jpg" alt="register" />
         <div class="back-button" @click="handleBack">
           <button>
             <font-awesome-icon :icon="['fas', 'arrow-left']" class="icon" />
@@ -11,7 +11,7 @@
         </div>
       </div>
 
-      <div class="login-form">
+      <div class="register-form">
         <h2>Crie sua conta</h2>
         <p>Já tem uma conta? <a href="#">Entrar</a></p>
 
@@ -33,9 +33,6 @@
             v-mask="'(##) #####-####'"
             maxlength="15"
           />
-          <small v-if="touched.phone && errors.phone" class="error">{{
-            errors.phone
-          }}</small>
           <div class="password-group">
             <input
               type="password"
@@ -50,15 +47,23 @@
           </div>
         </div>
 
-        <button class="create-account-button">Criar conta</button>
+        <button class="create-account-button" @click="handleRegister">
+          Criar conta
+        </button>
 
         <div class="or">
-          <span>Or register with</span>
+          <span>Ou registre-se com</span>
         </div>
 
-        <div class="social-login">
-          <button class="google-button">Google</button>
-          <button class="apple-button">Apple</button>
+        <div class="social-register">
+          <button class="google-button">
+            <font-awesome-icon :icon="['fab', 'google']" class="icon-google" />
+            Google
+          </button>
+          <button class="apple-button">
+            <font-awesome-icon :icon="['fab', 'apple']" class="icon-apple" />
+            Apple
+          </button>
         </div>
       </div>
     </div>
@@ -68,6 +73,8 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
+import { registerUser } from "@/api/userApi";
+import Swal from "sweetalert2";
 
 const router = useRouter();
 
@@ -81,7 +88,6 @@ const form = ref({
 
 const touched = ref({
   email: false,
-  phone: false,
 });
 
 const errors = computed(() => {
@@ -92,9 +98,60 @@ const errors = computed(() => {
   };
 });
 
-// const isFormValid = computed(() => {
-//   return !Object.values(errors.value).some((error) => error !== "");
-// });
+const handleRegister = async () => {
+  try {
+    Swal.fire({
+      title: "Aguarde",
+      text: "Criando sua conta...",
+      allowOutsideClick: false,
+      background: "#2e2b3d",
+      color: "#fff",
+      disOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    const response = await registerUser(form.value);
+    const message = response.data.message;
+
+    Swal.close();
+
+    Swal.fire({
+      icon: "success",
+      title: "Cadastro realizado!",
+      text: message,
+      background: "#2e2b3d",
+      color: "#fff",
+      showClass: {
+        popup: "animate__animated animate__fadeInDown",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp",
+      },
+      confirmButtonColor: "#28a745",
+    });
+
+    router.push("/login");
+  } catch (e) {
+    Swal.close();
+    const errorMessage = e.response?.data?.message || "Erro inesperado.";
+
+    Swal.fire({
+      icon: "error",
+      title: "Ops, algo deu errado",
+      text: errorMessage,
+      background: "#2e2b3d",
+      color: "#fff",
+      confirmButtonColor: "#d33",
+      showClass: {
+        popup: "animate__animated animate__shakeX",
+      },
+      hideClass: {
+        popup: "animate__animated animate__fadeOutUp",
+      },
+    });
+  }
+};
 
 const handleBack = () => {
   router.back();
@@ -102,7 +159,7 @@ const handleBack = () => {
 </script>
 
 <style lang="scss">
-.login {
+.register {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -111,18 +168,18 @@ const handleBack = () => {
   color: #ffffff;
   overflow: hidden;
 
-  .login-container {
+  .register-container {
     display: grid;
     grid-template-columns: 1fr 1fr;
     background-color: #2e2b3d;
     width: 80vw;
-    height: 80vh;
+    height: 85vh;
     border-radius: 20px;
     padding: 13px;
     overflow: hidden;
   }
 
-  .login-image {
+  .register-image {
     position: relative;
     display: flex;
     align-items: center;
@@ -165,7 +222,7 @@ const handleBack = () => {
     }
   }
 
-  .login-form {
+  .register-form {
     padding: 0 2em 2em 2em;
     display: flex;
     flex-direction: column;
@@ -232,6 +289,7 @@ const handleBack = () => {
       font-size: 1rem;
       cursor: pointer;
       margin: 1em 0;
+      width: 10em;
       transition:
         background-color 0.3s ease,
         transform 0.1s ease;
@@ -248,28 +306,44 @@ const handleBack = () => {
       font-size: 0.9rem;
     }
 
-    .social-login {
+    .social-register {
       display: flex;
       gap: 1em;
       justify-content: center;
 
       .google-button,
       .apple-button {
+        display: flex;
         flex: 1;
         padding: 0.8em;
         background-color: #444;
         color: #ffffff;
         border: none;
         border-radius: 4px;
+        align-items: center;
+        justify-content: center;
         font-size: 0.9rem;
         cursor: pointer;
         margin-top: 0.7em;
+        width: 10em;
         transition:
           background-color 0.3s ease,
           transform 0.1s ease;
 
         &:hover {
           background-color: #555;
+        }
+
+        .icon-google {
+          font-size: 1.2em;
+          margin-right: 1em;
+          margin-bottom: 0.1em;
+        }
+
+        .icon-apple {
+          font-size: 1.5em;
+          margin-right: 1em;
+          margin-bottom: 0.1em;
         }
       }
     }

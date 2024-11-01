@@ -18,13 +18,13 @@ const router = createRouter({
       ],
     },
     {
-      path: "/login",
+      path: "/register",
       component: AuthLayout,
       children: [
         {
           path: "",
-          name: "login",
-          component: () => import("../views/Login/Login.vue"),
+          name: "register",
+          component: () => import("../views/Register/Register.vue"),
         },
       ],
     },

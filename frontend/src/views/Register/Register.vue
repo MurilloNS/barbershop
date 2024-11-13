@@ -13,7 +13,7 @@
 
       <div class="register-form">
         <h2>Crie sua conta</h2>
-        <p>Já tem uma conta? <a href="#">Entrar</a></p>
+        <p>Já tem uma conta? <router-link to="/login">Entrar</router-link></p>
 
         <div class="form-group">
           <input type="text" placeholder="Nome Completo" v-model="form.name" />
@@ -244,6 +244,7 @@ const handleBack = () => {
       a {
         color: #7f7aff;
         text-decoration: none;
+        margin-left: 3px
       }
     }
 

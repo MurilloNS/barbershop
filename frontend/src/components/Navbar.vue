@@ -13,9 +13,13 @@
     </ul>
 
     <div class="navbar-auth">
-      <button class="auth-button">Entrar</button>
+      <RouterLink to="/login">
+        <button class="auth-button">Login</button>
+      </RouterLink>
       <span class="auth-or">ou</span>
-      <button class="auth-button">Registrar</button>
+      <RouterLink to="/register">
+        <button class="auth-button">Registrar</button>
+      </RouterLink>
     </div>
   </nav>
 </template>
@@ -66,6 +70,7 @@ $active-link-color: #ffd700;
     gap: 4em;
     margin: 0;
     padding: 0;
+    cursor: pointer;
 
     li {
       cursor: pointer;
